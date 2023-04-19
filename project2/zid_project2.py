@@ -20,7 +20,7 @@ import pandas as pd
 # package) is imported as "cfg"
 # Note: This module should be imported as cfg
 #
-import config as cfg
+from project2 import config as cfg
 
 # ---------------------------------------------------------------------------- 
 # Part 3: Complete the read_prc_csv function
@@ -353,15 +353,17 @@ def mk_aret_df(ret_df):
         memory usage: 5.9 KB
     
     """
+    columns = ret_df.columns
     for index, row in ret_df.iterrows():
-        if not pd.notna(row.loc['mkt']):
-            continue
-        if pd.notna(row.loc['aapl']):
-            row.loc['aapl'] = row.loc['aapl'] - row.loc['mkt']
-        if pd.notna(row.loc['tsla']):
-            row.loc['tsla'] = row.loc['tsla'] - row.loc['mkt']
-    
-    return ret_df.loc[:, ['aapl', 'tsla']]
+        for col in columns:
+            if col != 'mkt':
+                if not pd.notna(row.loc['mkt']):
+                    continue
+                if pd.notna(row.loc[col]):
+                    row.loc[col] = row.loc[col] - row.loc['mkt']
+
+    aret_df = ret_df.drop(columns=['mkt'])
+    return aret_df
 
 # ---------------------------------------------------------------------------- 
 # Part 7: Auxiliary functions
@@ -412,9 +414,9 @@ def get_avg(df, col, year):
         0.032
 
     """
-    #<COMPLETE THIS PART>
+    df_year = df.loc[str(year)]
 
-
+    return df_year[col].mean()
 
 def get_ew_rets(df, tickers):
     """ Returns a series with the returns on an equally-weighted portfolio
@@ -457,9 +459,20 @@ def get_ew_rets(df, tickers):
 
 
     """
-    #<COMPLETE THIS PART>
-
-
+    returns = []
+    for index, row in df.iterrows():
+        ret = 0
+        num = 0
+        for tick in tickers:
+            if pd.notna(row.loc[tick]):
+                ret += row.loc[tick]
+                num += 1
+        if ret != 0 or num != 0:
+            ret = ret / num
+        else:
+            ret = "NaN"
+        returns.append(ret)
+    return pd.Series(returns, index=df.index)
 
 def get_ann_ret(ser, start, end):
     """ Returns the annualised returns for a given period.
@@ -503,8 +516,13 @@ def get_ann_ret(ser, start, end):
       computation of tot_ret
 
     """
-    # <COMPLETE THIS PART>
+    working_ser = ser[start:end]
+    no_missing_ser = working_ser.dropna()
+    # length_ser = working_ser.size
+    cap_n = no_missing_ser.size
 
+    ann_return = working_ser.add(1).prod() ** (252 / cap_n) - 1
+    return ann_return
 
 # ----------------------------------------------------------------------------
 # Part 8: Answer the following questions
@@ -539,7 +557,7 @@ def get_ann_ret(ser, start, end):
 #     year 2020 (ignoring missing values)? The sample should include all tickers
 #     included in the dictionary config.TICMAP. Your answer should include the
 #     ticker for this stock.
-Q1_ANSWER = '?'
+Q1_ANSWER = 'NVDA'
 
 
 # Q2: What is the annualised return for the EW portfolio of all your stocks in
@@ -757,7 +775,6 @@ def _test_mk_aret_df():
     aret_df = mk_aret_df(ret_df)
     _test_print(aret_df)
 
-
 def _test_get_avg():
     """ Test function for `get_avg`
     """
@@ -974,29 +991,43 @@ def _test_get_ann_ret():
     _test_print('\n'.join(to_print))
 
 def _test_my_own_test():
-    tickers = ['AAPL', 'TSLA']
-    prc_df = mk_prc_df(tickers, prc_col='adj_close')
-    ret_df = mk_ret_df(prc_df)
-    print(ret_df)
+    # tickers = []
+    # for tick, value in cfg.TICMAP:
+    #     tickers.append(tick)
+    # print(cfg.TICKERS)
+    # prc_df = mk_prc_df(cfg.TICKERS, prc_col='adj_close')
+    #
+    # file_path = os.fspath(cfg.FF_CSV)
+    # daily = pd.read_csv(file_path)
+    # daily.index = pd.to_datetime(daily['Date'], format='%Y-%m-%d')
+    # daily.drop(columns=['Date'], inplace=True)
+    # prc_df = prc_df.sort_index()
+    # df = prc_df["2010-01-01":"2020-12-31"]
+    # print(df)
+    tic_list = [i.lower() for i in cfg.TICKERS]
+    #
+    # ew_rets = get_ew_rets(df, [i.lower() for i in cfg.TICKERS])
+
+    # print("HERE")
+    # print(type(ew_rets))
+    # print(get_ann_ret(ew_rets, "2010-01-01","2020-12-31"))
+
+    for x in tic_list:
+        a = get_ew_rets(mk_ret_df(mk_prc_df(tic_list,'adj_close'),),tic_list)
+        i = get_ann_ret(a, '2010-01-01', '2020-12-31')
+    print(i)
+
+
 
 if __name__ == "__main__":
-<<<<<<< Updated upstream
     #_test_cfg()
     #_test_read_prc_csv()
-    #_test_mk_prc_df()
-    #_test_mk_ret_df()
-    _test_mk_aret_df()
-=======
-    # _test_cfg()
-    # _test_read_prc_csv()
     # _test_mk_prc_df()
-    _test_mk_ret_df()
-    #_test_mk_aret_df()
->>>>>>> Stashed changes
-    #_test_get_avg()
-    #_test_get_ew_rets()
-    #_test_get_ann_ret()
-    #_test_my_own_test()
+    # _test_mk_aret_df()
+    # _test_get_avg()
+    # _test_get_ew_rets()
+    # _test_get_ann_ret()
+    _test_my_own_test()
 
 
 
