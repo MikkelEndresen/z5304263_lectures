@@ -24,7 +24,6 @@ import config as cfg
 
 
 
-
 # ---------------------------------------------------------------------------- 
 # Part 3: Complete the read_prc_csv function
 # ---------------------------------------------------------------------------- 
@@ -993,7 +992,6 @@ def _test_my_own_test():
     print(ret_df)
 
 if __name__ == "__main__":
-    pass
     #_test_cfg()
     #_test_read_prc_csv()
     #_test_mk_prc_df()
