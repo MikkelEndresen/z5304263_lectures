@@ -22,8 +22,6 @@ import pandas as pd
 #
 import config as cfg
 
-
-
 # ---------------------------------------------------------------------------- 
 # Part 3: Complete the read_prc_csv function
 # ---------------------------------------------------------------------------- 
@@ -84,15 +82,11 @@ def read_prc_csv(tic):
     """
     data = os.path.join(cfg.DATADIR, f'{tic}_prc.csv')
     df = pd.read_csv(data)
-    #df.set_index('Date', inplace=True)
     df.index = pd.to_datetime(df['Date'], format='%Y-%m-%d')
     df.drop(columns=['Date'], inplace=True)
     df = cfg.standardise_colnames(df)
 
     return df
-
-
-
 
 # ---------------------------------------------------------------------------- 
 # Part 4: Complete the mk_prc_df function
@@ -203,7 +197,7 @@ def mk_prc_df(tickers, prc_col='adj_close'):
         df_temp = read_prc_csv(tic)
         df_temp = df_temp.loc[:, prc_col]
         list.append(df_temp)
-    #print(list)
+
     df = pd.concat(list, axis=1)
     df = df.dropna(how='all')
     df.columns = tickers
@@ -284,8 +278,8 @@ def mk_ret_df(prc_df):
 
 
     """
-    data = os.path.join(cfg.DATADIR, 'ff_daily.csv')
-    daily = pd.read_csv(data)
+    file_path = os.fspath(cfg.FF_CSV)
+    daily = pd.read_csv(file_path)
     daily.index = pd.to_datetime(daily['Date'], format='%Y-%m-%d')
     daily.drop(columns=['Date'], inplace=True)
     daily = daily.loc[:, 'mkt']
@@ -295,9 +289,6 @@ def mk_ret_df(prc_df):
     df = prc_df_returns.join(daily)
 
     return df
-
-
-
 
 # ---------------------------------------------------------------------------- 
 # Part 6: Complete the mk_aret_df function
@@ -647,6 +638,8 @@ def _test_mk_prc_df():
     prc_df = mk_prc_df(tickers, prc_col='adj_close')
     _test_print(prc_df)
 
+    print(prc_df.loc["2010-12-01":"2010-12-30"])
+
 def _test_mk_ret_df():
     """ Test function for the `mk_ret_df` function
 
@@ -987,11 +980,19 @@ def _test_my_own_test():
     print(ret_df)
 
 if __name__ == "__main__":
+<<<<<<< Updated upstream
     #_test_cfg()
     #_test_read_prc_csv()
     #_test_mk_prc_df()
     #_test_mk_ret_df()
     _test_mk_aret_df()
+=======
+    # _test_cfg()
+    # _test_read_prc_csv()
+    # _test_mk_prc_df()
+    _test_mk_ret_df()
+    #_test_mk_aret_df()
+>>>>>>> Stashed changes
     #_test_get_avg()
     #_test_get_ew_rets()
     #_test_get_ann_ret()
