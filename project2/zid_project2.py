@@ -11,7 +11,6 @@ z5304263_project2 - Mikkel Endresen
 # ---------------------------------------------------------------------------- 
 
 import os
-import config as cfg
 import pandas as pd
 
 # ---------------------------------------------------------------------------- 
@@ -21,7 +20,8 @@ import pandas as pd
 # package) is imported as "cfg"
 # Note: This module should be imported as cfg
 #
-# <COMPLETE THIS PART>
+import config as cfg
+
 
 
 
