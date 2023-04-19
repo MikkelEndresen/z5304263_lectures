@@ -293,17 +293,6 @@ def mk_ret_df(prc_df):
 
     prc_df_returns = prc_df.pct_change()
     df = prc_df_returns.join(daily)
-    #df = prc_df.join(daily)
-    #df = df.sort_index()
-
-    #list = []
-    #list.append(prc_df)
-    #list.append(daily)
-    #df = pd.concat(list, axis=1)
-    #df = pd.concat([prc_df, daily], axis=1)
-
-    #df.dropna(thresh=2)
-    #print(daily)
 
     return df
 
@@ -373,9 +362,15 @@ def mk_aret_df(ret_df):
         memory usage: 5.9 KB
     
     """
-    # <COMPLETE THIS PART>
-
-
+    for index, row in ret_df.iterrows():
+        if not pd.notna(row.loc['mkt']):
+            continue
+        if pd.notna(row.loc['aapl']):
+            row.loc['aapl'] = row.loc['aapl'] - row.loc['mkt']
+        if pd.notna(row.loc['tsla']):
+            row.loc['tsla'] = row.loc['tsla'] - row.loc['mkt']
+    
+    return ret_df.loc[:, ['aapl', 'tsla']]
 
 # ---------------------------------------------------------------------------- 
 # Part 7: Auxiliary functions
@@ -995,8 +990,8 @@ if __name__ == "__main__":
     #_test_cfg()
     #_test_read_prc_csv()
     #_test_mk_prc_df()
-    _test_mk_ret_df()
-    #_test_mk_aret_df()
+    #_test_mk_ret_df()
+    _test_mk_aret_df()
     #_test_get_avg()
     #_test_get_ew_rets()
     #_test_get_ann_ret()
