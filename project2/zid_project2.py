@@ -80,7 +80,7 @@ def read_prc_csv(tic):
        'aaa.csv' are different files). 
 
     """
-    data = os.path.join(cfg.DATADIR, f'{tic}_prc.csv')
+    data = os.path.join(cfg.DATADIR, f'{tic.lower()}_prc.csv')
     df = pd.read_csv(data)
     df.index = pd.to_datetime(df['Date'], format='%Y-%m-%d')
     df.drop(columns=['Date'], inplace=True)
@@ -203,9 +203,6 @@ def mk_prc_df(tickers, prc_col='adj_close'):
     df.columns = tickers
 
     return df
-
-
-
 
 # ---------------------------------------------------------------------------- 
 # Part 5: Complete the mk_ret_df function
@@ -562,22 +559,19 @@ Q1_ANSWER = 'NVDA'
 
 # Q2: What is the annualised return for the EW portfolio of all your stocks in
 # the config.TICMAP dictionary from the beginning of 2010 to the end of 2020?
-Q2_ANSWER = '?'
+Q2_ANSWER = '0.2044'
 
 # Q3: What is the annualised daily return for the period from 2010 to 2020 for
 # the stock with the highest average return in 2020 (the one you identified in
 # the first question above)?
-Q3_ANSWER = '?'
+Q3_ANSWER = '0.1746'
 
 # Q4: What is the annualised daily ABNORMAL return for the period from 2010 to 2020 for
 # the stock with the highest average return in 2020 (the one you identified in
 # the first question Q1 above)? Abnormal returns are calculated by subtracting
 # the market return ("mkt") from the individual stock return.
-Q4_ANSWER = '?'
+Q4_ANSWER = '0.2436'
     
-
-
-
 # ----------------------------------------------------------------------------
 #   Test functions 
 # ----------------------------------------------------------------------------
@@ -991,44 +985,59 @@ def _test_get_ann_ret():
     _test_print('\n'.join(to_print))
 
 def _test_my_own_test():
-    # tickers = []
-    # for tick, value in cfg.TICMAP:
-    #     tickers.append(tick)
-    # print(cfg.TICKERS)
+    print("Hello")
+
+def _test_q_2():
+    tic_list = [i.lower() for i in cfg.TICKERS]
+
+    # print(tic_list)
     # prc_df = mk_prc_df(cfg.TICKERS, prc_col='adj_close')
     #
     # file_path = os.fspath(cfg.FF_CSV)
     # daily = pd.read_csv(file_path)
     # daily.index = pd.to_datetime(daily['Date'], format='%Y-%m-%d')
     # daily.drop(columns=['Date'], inplace=True)
-    # prc_df = prc_df.sort_index()
-    # df = prc_df["2010-01-01":"2020-12-31"]
+    # df = prc_df.sort_index()
     # print(df)
-    tic_list = [i.lower() for i in cfg.TICKERS]
     #
-    # ew_rets = get_ew_rets(df, [i.lower() for i in cfg.TICKERS])
-
-    # print("HERE")
-    # print(type(ew_rets))
-    # print(get_ann_ret(ew_rets, "2010-01-01","2020-12-31"))
-
-    for x in tic_list:
-        a = get_ew_rets(mk_ret_df(mk_prc_df(tic_list,'adj_close'),),tic_list)
-        i = get_ann_ret(a, '2010-01-01', '2020-12-31')
-    print(i)
+    # #
+    # ew_rets = get_ew_rets(df, tic_list)
+    # print(ew_rets)
+    # ann_rets = get_ann_ret(ew_rets, "2010-01-01","2020-12-31")
+    # print(ann_rets)
 
 
+    ew_rets = get_ew_rets(mk_ret_df(mk_prc_df(tic_list, 'adj_close')), tic_list)
+
+    print(ew_rets)
+    print(type(ew_rets))
+    ann_ret = get_ann_ret(ew_rets, '2010-01-01', '2020-12-31')
+    print(ann_ret)
+
+def _test_q_3():
+    nvda_ser = mk_ret_df(mk_prc_df(['nvda'], 'adj_close'))
+    ann_ret = get_ann_ret(nvda_ser, '2010-01-01', '2020-12-31')
+    print(type(ann_ret))
+    print(ann_ret)
+
+def _test_q_4():
+    nvda_ser = mk_aret_df(mk_ret_df(mk_prc_df(['nvda'], 'adj_close')))
+    ab_ann_ret = get_ann_ret(nvda_ser, '2010-01-01', '2020-12-31')
+    print(ab_ann_ret)
 
 if __name__ == "__main__":
-    #_test_cfg()
-    #_test_read_prc_csv()
+    pass
+    # _test_cfg()
+    # _test_read_prc_csv()
     # _test_mk_prc_df()
     # _test_mk_aret_df()
     # _test_get_avg()
     # _test_get_ew_rets()
     # _test_get_ann_ret()
-    _test_my_own_test()
-
+    # _test_my_own_test()
+    # _test_q_2()
+    # _test_q_3()
+    # _test_q_4()
 
 
 
