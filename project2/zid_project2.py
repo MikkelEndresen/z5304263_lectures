@@ -571,7 +571,7 @@ Q3_ANSWER = '0.1746'
 # the first question Q1 above)? Abnormal returns are calculated by subtracting
 # the market return ("mkt") from the individual stock return.
 Q4_ANSWER = '0.2436'
-    
+
 # ----------------------------------------------------------------------------
 #   Test functions 
 # ----------------------------------------------------------------------------
@@ -987,6 +987,18 @@ def _test_get_ann_ret():
 def _test_my_own_test():
     print("Hello")
 
+def _test_q_1():
+    daily = []
+    for tick, value in cfg.TICMAP.items():
+        file_name = os.path.join(cfg.DATADIR, tick.lower() + "_prc.csv")
+        df = pd.read_csv(file_name)
+        df['Date'] = pd.to_datetime(df['Date'])
+        df.set_index('Date', inplace=True)
+        daily.append((tick, get_avg(df, "Adj Close", int(2020))))
+    print(daily)
+    max_value = max(daily, key=lambda x: x[1])[0]
+    print(max_value)
+
 def _test_q_2():
     tic_list = [i.lower() for i in cfg.TICKERS]
 
@@ -1035,6 +1047,7 @@ if __name__ == "__main__":
     # _test_get_ew_rets()
     # _test_get_ann_ret()
     # _test_my_own_test()
+    _test_q_1()
     # _test_q_2()
     # _test_q_3()
     # _test_q_4()
